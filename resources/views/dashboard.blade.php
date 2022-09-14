@@ -39,11 +39,6 @@
                             class="text-gray-500 group inline-flex items-center rounded-md bg-white text-base font-medium hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             aria-expanded="false">
                         <span>Solutions</span>
-                        <!--
-                          Heroicon name: mini/chevron-down
-
-                          Item active: "text-gray-600", Item inactive: "text-gray-400"
-                        -->
                         <svg class="text-gray-400 ml-2 h-5 w-5 group-hover:text-gray-500"
                              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                              aria-hidden="true">
@@ -80,12 +75,17 @@
                 </div>
             </nav>
             <div class="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
-                <a x-on:click="page = 'login' " href="#login"
+                <a x-on:click="gotoLogin" href="#login" x-show="page != 'dashboard'"
                    class="whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900">Sign
                     in</a>
-                <a x-on:click="page = 'register'" href="#register"
+                <a x-on:click="gotoRegister" href="#register" x-show="page != 'dashboard'"
                    class="ml-8 inline-flex items-center justify-center whitespace-nowrap rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700">Sign
                     up</a>
+
+                <a x-on:click="logout" href="#login" x-show="page == 'dashboard'"
+                   class="ml-8 inline-flex items-center justify-center whitespace-nowrap rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700">
+                    Logout
+                </a>
             </div>
         </div>
     </div>
@@ -101,11 +101,11 @@
 
             <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                    <form class="space-y-6" action="#" method="POST">
+                    <form class="space-y-6" action="#" method="POST" x-on:submit.prevent="login">
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
                             <div class="mt-1">
-                                <input id="email" name="email" type="email" autocomplete="email" required
+                                <input id="email" x-model="email" name="email" type="email" autocomplete="email"
                                        class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
                             </div>
                         </div>
@@ -113,21 +113,15 @@
                         <div>
                             <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
                             <div class="mt-1">
-                                <input id="password" name="password" type="password" autocomplete="current-password"
-                                       required
+                                <input id="password" x-model="password" name="password" type="password"
+                                       autocomplete="current-password"
                                        class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
                             </div>
                         </div>
 
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <input id="remember-me" name="remember-me" type="checkbox"
-                                       class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
-                                <label for="remember-me" class="ml-2 block text-sm text-gray-900">Remember me</label>
-                            </div>
-
                             <div class="text-sm">
-                                <a href="#forgot" x-on:click="page = 'forgot'"
+                                <a href="#forgot" x-on:click="gotoForgot"
                                    class="font-medium text-indigo-600 hover:text-indigo-500">Forgot your password?</a>
                             </div>
                         </div>
@@ -136,6 +130,56 @@
                             <button type="submit"
                                     class="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                 Sign in
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div x-show="page == 'reset' && password_token">
+        <div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
+            <div class="sm:mx-auto sm:w-full sm:max-w-md">
+                <img class="mx-auto h-12 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                     alt="Your Company">
+                <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Reset Password</h2>
+            </div>
+
+            <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+                <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                    <form class="space-y-6" action="#" method="POST" x-on:submit.prevent="resetPassword">
+
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+                            <div class="mt-1">
+                                <input id="email" x-model="email" name="email" type="email" autocomplete="email"
+                                       class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                            <div class="mt-1">
+                                <input id="password" x-model="password" name="password" type="password"
+                                       required
+                                       class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                            <div class="mt-1">
+                                <input id="password_confirmation" x-model="password_confirmation" name="password_confirmation" type="password"
+                                       required
+                                       class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <button type="submit"
+                                    class="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                                Reset Password
                             </button>
                         </div>
                     </form>
@@ -154,11 +198,11 @@
 
             <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                    <form class="space-y-6" action="#" method="POST">
+                    <form class="space-y-6" action="#" method="POST" x-on:submit.prevent="register">
                         <div>
                             <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
                             <div class="mt-1">
-                                <input id="name" name="name" type="name" autocomplete="name" required
+                                <input id="name" x-model="name" name="name" type="name" autocomplete="name" required
                                        class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
                             </div>
                         </div>
@@ -166,7 +210,8 @@
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
                             <div class="mt-1">
-                                <input id="email" name="email" type="email" autocomplete="email" required
+                                <input id="email" x-model="email" name="email" type="email" autocomplete="email"
+                                       required
                                        class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
                             </div>
                         </div>
@@ -174,7 +219,17 @@
                         <div>
                             <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
                             <div class="mt-1">
-                                <input id="password" name="password" type="password" autocomplete="current-password"
+                                <input id="password" x-model="password" name="password" type="password"
+                                       autocomplete="current-password"
+                                       required
+                                       class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                            <div class="mt-1">
+                                <input id="password_confirmation" x-model="password_confirmation" name="password_confirmation" type="password"
                                        required
                                        class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
                             </div>
@@ -202,14 +257,15 @@
 
             <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                    <form class="space-y-6" action="#" method="POST">
+                    <form class="space-y-6" action="#" method="POST" x-on:submit.prevent="forgotPassword">
                         <p class="mt-2 text-center text-sm text-gray-600">
                             Don't worry, we'll recover it for you, just enter your email address below
                         </p>
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
                             <div class="mt-1">
-                                <input id="email" name="email" type="email" autocomplete="email" required
+                                <input id="email" x-model="email" name="email" type="email" autocomplete="email"
+                                       required
                                        class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
                             </div>
                         </div>
@@ -226,21 +282,323 @@
         </div>
     </div>
 
-
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
 <script>
     document.addEventListener('alpine:init', () => {
+
+        /**
+         * Get the CSRF token from the API and attack it to the cookie
+         *
+         * WARNING : This is to be used if only the API is on the same domain as the frontend
+         *
+         * @returns {Promise<Response>}
+         */
+        function fetchCsrfToken() {
+            // fetch the CSRF token from /sanctum/csrf-cookie and add it to the XSRF-TOKEN header and cookie
+            return fetch('/sanctum/csrf-cookie').then(response => {
+                if (response.status === 204) {
+                    console.info('CSRF token successfully set');
+                } else {
+                    throw new Error('Failed to fetch CSRF token');
+                }
+            });
+        }
+
+
         Alpine.data('app', () => ({
             page: 'login',
+            name: '',
+            email: 'user@test.com',
+            password: 'password',
+            password_confirmation: '',
+            token : '',
+            password_token : null,
+            user : {},
             init() {
+
+                // get the CSRF token
+                fetchCsrfToken();
+
                 console.log('Application is ready');
 
                 // check if the url contains a hash and set it as the active page
                 if (window.location.hash) {
                     this.page = window.location.hash.replace('#', '');
                 }
-            }
+
+
+                // // get user
+                // fetch('/api/user', {
+                //     method: 'GET',
+                //     headers: {
+                //         'Accept': 'application/json',
+                //         'Content-Type': 'application/json',
+                //         'X-Requested-With': 'XMLHttpRequest',
+                //         'X-XSRF-TOKEN': Cookies.get('XSRF-TOKEN')
+                //     },
+                //     credentials: 'same-origin'
+                // }).then(response => {
+                //     if (response.status === 200) {
+                //         console.info('User successfully logged in');
+                //     } else {
+                //         throw new Error('Failed to login');
+                //     }
+                // });
+
+            },
+
+            login() {
+                // send the login request
+                fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-XSRF-TOKEN': Cookies.get('XSRF-TOKEN')
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        email: this.email,
+                        password: this.password
+                    })
+                }).then(response => {
+
+                    if (response.status === 200) {
+
+                        // remove the token from the alpine data
+                        this.token = '';
+
+                        // remove the password_token from the alpine data
+                        this.password_token = '';
+
+                        // remove the user from the alpine data
+                        this.user = {};
+
+                        // remove the passwords from the alpine data object
+                        this.password = '';
+                        this.password_token = '';
+
+                        // get the json of the response body and set it to the alpine data
+                        response.json().then(data => {
+                            // add the token to the alpine data
+                            this.token = data.token;
+                            // add the user to the alpine data
+                            this.user = data.user;
+                        });
+
+                        // set the active page as dashboard
+                        this.page = 'dashboard';
+
+                    } else {
+                        // get the response body as json and get the message
+                        response.json().then(data => {
+                            alert('Failed to login :'+ data.message);
+                        });
+                    }
+                });
+            },
+
+            logout(){
+                // send the logout request
+                fetch('/api/auth/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-XSRF-TOKEN': Cookies.get('XSRF-TOKEN')
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        token: this.token
+                    })
+                }).then(response => {
+
+                    if (response.status === 200) {
+
+                        // remove the token from the alpine data
+                        this.token = '';
+
+                        // remove the password_token from the alpine data
+                        this.password_token = '';
+
+                        // remove the user from the alpine data
+                        this.user = {};
+
+                        // remove the passwords from the alpine data object
+                        this.password = '';
+                        this.password_token = '';
+
+                        // set the active page as login
+                        this.page = 'login';
+
+                    } else {
+                        // get the response body as json and get the message
+                        response.json().then(data => {
+                            alert('Failed to logout :'+ data.message);
+                        });
+                    }
+                });
+            },
+
+            forgotPassword(){
+                // send the forgot password request
+                fetch('/api/auth/forgot-password', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-XSRF-TOKEN': Cookies.get('XSRF-TOKEN')
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        email: this.email
+                    })
+                }).then(response => {
+
+                    if (response.status === 200) {
+
+                        // remove the token from the alpine data
+                        this.token = '';
+
+                        // remove the user from the alpine data
+                        this.user = {};
+
+                        // remove the passwords from the alpine data object
+                        this.password = '';
+                        this.password_token = '';
+
+                        // set the active page as login
+                        this.page = 'reset';
+
+                        response.json().then(data => {
+                            // add the password_token to the alpine data object
+                            this.password_token = data.token;
+                        });
+
+                    } else {
+                        // get the response body as json and get the message
+                        response.json().then(data => {
+                            alert('Failed to perform the action :'+ data.message);
+                        });
+                    }
+                });
+            },
+
+            resetPassword(){
+                // send the reset password request
+                fetch('/api/auth/reset-password', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-XSRF-TOKEN': Cookies.get('XSRF-TOKEN')
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        email: this.email,
+                        password: this.password,
+                        password_confirmation: this.password_confirmation,
+                        token: this.password_token
+                    })
+                }).then(response => {
+
+                    if (response.status === 200) {
+
+                        // remove the token from the alpine data
+                        this.token = '';
+
+                        // remove the user from the alpine data
+                        this.user = {};
+
+                        // set the active page as login
+                        this.page = 'login';
+
+                        response.json().then(data => {
+                            alert(data.message);
+                        });
+
+                    } else {
+                        // get the response body as json and get the message
+                        response.json().then(data => {
+                            alert('Failed to perform the action :'+ data.message);
+                        });
+                    }
+                });
+            },
+
+            register(){
+                // send the register request
+                fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-XSRF-TOKEN': Cookies.get('XSRF-TOKEN')
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        name: this.name,
+                        email: this.email,
+                        password: this.password,
+                        password_confirmation: this.password_confirmation
+                    })
+                }).then(response => {
+
+                    if (response.status === 200) {
+
+                        // remove the token from the alpine data
+                        this.token = '';
+
+                        // remove the password_token from the alpine data
+                        this.password_token = '';
+
+                        // remove the user from the alpine data
+                        this.user = {};
+
+                        // remove the passwords from the alpine data object
+                        this.password = '';
+                        this.password_token = '';
+
+                        // set the active page as login
+                        this.page = 'dashboard';
+
+                        // get the json of the response body and set it to the alpine data
+                        response.json().then(data => {
+                            // add the token to the alpine data
+                            this.token = data.token;
+                            // add the user to the alpine data
+                            this.user = data.user;
+                        });
+
+                    } else {
+                        // get the response body as json and get the message
+                        response.json().then(data => {
+                            alert('Failed to perform the action :'+ data.message);
+                        });
+                    }
+                });
+            },
+
+
+            gotoLogin() {
+                // set the page to login
+                this.page = this.token ? 'dashboard' : 'login';
+            },
+            gotoRegister() {
+                // set the page to register
+                this.page = this.token ? 'dashboard' : 'register';
+            },
+            gotoForgot() {
+                // set the page to forgot
+                this.page = this.token ? 'dashboard' : 'forgot';
+            },
         }))
     })
 </script>
