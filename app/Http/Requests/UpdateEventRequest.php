@@ -26,8 +26,10 @@ class UpdateEventRequest extends FormRequest
         return [
             'title' => 'required',
             'content' => 'required',
-            'start_date' => 'required',
-            'end_date' => 'required',
+            // start date should be a valid date and should be before the end date
+            'start_date' => 'required|date|before:end_date',
+            // end date should be a valid date and should be after the start date
+            'end_date' => 'required|date|after:start_date',
         ];
     }
 }
