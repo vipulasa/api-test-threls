@@ -21,21 +21,22 @@ single controller to handle all the functionality.
 
 The front end is created using AlpineJS and TailwindCSS. The front end is created as a sample to test the functionality
 
-The password reset is implemented using the Laravel's default functionality. 
+The password reset is implemented using the Laravel's default password reset core methods. 
 
-Once the user go through the password reset flow, without sending the email, the link is
-displayed on the sample front end. This is done to be able to continue seamless testing.
-
-In an actual application, the email will be sent to the user with the front end link and the user will be able to reset the password.
+Once the user go through the password reset flow, without sending the email, the token is sent thorugh the API.
+And the user is redirected to the password reset page. The user can reset the password from there.
 
 
----- DELETE
+In an actual application, the email will be sent to the user with the front-end link and the user will be able to reset the password going through the same validation method.
 
-The application has two tables `users` and `posts`. The `users` table
-has the user details and the `posts` table has the posts created by the users. The application has the following
-features.
+For the event module, a single Controller is used as a resource controller and the API is based on the REST API concept.
 
----- DELETE
+#### What can be improved & updated
+- Event / Actions and Notification emails must be added.
+- 2FA can be added using the Laravel's default 2FA implementation.
+- Additional validation can be added to the API.
+- User token generation can be improved by adding role based access using the Sanctum Abilities functionality.
+
 
 References
 
