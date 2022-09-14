@@ -507,7 +507,7 @@
             email: 'user@test.com',
             password: 'password',
             password_confirmation: '',
-            token: '',
+            token: null,
             password_token: null,
             user: {},
             events: [],
@@ -527,6 +527,8 @@
                 // check if there is token in the cookie and set it in to the token variable
                 this.token = Cookies.get('AUTH-TOKEN');
 
+                console.log(this.token);
+
                 // check if the url contains a hash and set it as the active page
                 if (window.location.hash) {
                     this.page = window.location.hash.replace('#', '');
@@ -540,9 +542,14 @@
 
                     this.page = 'dashboard';
 
-                    // load events list
-                    this.getEvents();
+
                 }
+
+                // get user details
+                this.getUser();
+
+                // load events list
+                this.getEvents();
 
             },
 
@@ -642,8 +649,16 @@
                         // set the active page as login
                         this.page = 'login';
 
+                        // clear the events
+                        this.events = [];
+
                         // set AUTH-TOKEN cookie to null
                         Cookies.remove('AUTH-TOKEN');
+                        Cookies.remove('laravel_session');
+                        Cookies.remove('XSRF-TOKEN');
+
+                        // reload the window
+                        window.location.reload();
 
                     } else {
                         // get the response body as json and get the message
